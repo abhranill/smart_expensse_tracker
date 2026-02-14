@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
 
 function App() {
@@ -5,18 +6,24 @@ function App() {
   const [amount, setAmount] = useState("");
   const [expenses, setExpenses] = useState([]);
 
-  const addExpense = () => {
-    if (!title || !amount) return;
+  const addExpense = async () => {
+  if (!title || !amount) return;
 
-    const newExpense = {
+  try {
+    await axios.post("http://localhost:5000/add-expense", {
       title,
-      amount
-    };
+      amount,
+    });
 
+    const newExpense = { title, amount };
     setExpenses([...expenses, newExpense]);
     setTitle("");
     setAmount("");
-  };
+  } catch (error) {
+    console.error("Error adding expense:", error);
+  }
+};
+
   const deleteExpense = (indexToDelete) => {
   const updatedExpenses = expenses.filter(
     (_, index) => index !== indexToDelete
