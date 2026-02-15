@@ -39,6 +39,15 @@ function App() {
       console.error("Error adding expense:", error);
     }
   };
+// 🔥 Delete expense
+const deleteExpense = async (index) => {
+  try {
+    await axios.delete(`http://localhost:5000/delete-expense/${index}`);
+    fetchExpenses(); // refresh list after delete
+  } catch (error) {
+    console.error("Error deleting expense:", error);
+  }
+};
 
   return (
     <div style={{ padding: "40px", fontFamily: "Arial" }}>
@@ -67,13 +76,20 @@ function App() {
 
       <h2 style={{ marginTop: "30px" }}>Expenses</h2>
 
-      <ul>
-        {expenses.map((exp, index) => (
-          <li key={index}>
-            {exp.title} - ₹{exp.amount}
-          </li>
-        ))}
-      </ul>
+    <ul>
+  {expenses.map((exp, index) => (
+    <li key={index}>
+      {exp.title} - ₹{exp.amount}
+      <button 
+        onClick={() => deleteExpense(index)} 
+        style={{ marginLeft: "10px" }}
+      >
+        ❌
+      </button>
+    </li>
+  ))}
+</ul>
+
 
       <h3>
         Total: ₹

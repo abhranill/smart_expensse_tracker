@@ -27,6 +27,16 @@ app.post("/add-expense", (req, res) => {
 app.get("/expenses", (req, res) => {
   res.json(expenses);
 });
+app.delete("/delete-expense/:index", (req, res) => {
+  const index = parseInt(req.params.index);
+
+  if (index >= 0 && index < expenses.length) {
+    expenses.splice(index, 1);
+    res.json({ message: "Expense deleted successfully" });
+  } else {
+    res.status(400).json({ message: "Invalid index" });
+  }
+});
 
 
 // Start server
