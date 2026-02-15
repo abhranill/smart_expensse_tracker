@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
-const app = express();
 
+const app = express();
+let expenses = [];
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -13,14 +14,20 @@ app.get("/", (req, res) => {
 
 // POST route
 app.post("/add-expense", (req, res) => {
-  console.log("Received from frontend:");
-  console.log(req.body);
+  const { title, amount } = req.body;
 
-  res.json({
-    message: "Expense received successfully",
-    data: req.body
-  });
+  const newExpense = { title, amount };
+
+  expenses.push(newExpense);
+
+  console.log("Stored in backend:", expenses);
+
+  res.json({ message: "Expense added successfully" });
 });
+app.get("/expenses", (req, res) => {
+  res.json(expenses);
+});
+
 
 // Start server
 const PORT = 5000;

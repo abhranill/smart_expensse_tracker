@@ -1,35 +1,44 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function App() {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [expenses, setExpenses] = useState([]);
 
+  // 🔥 Fetch expenses from backend
+  const fetchExpenses = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/expenses");
+      setExpenses(res.data);
+    } catch (error) {
+      console.error("Error fetching expenses:", error);
+    }
+  };
+
+  // 🔥 Load expenses when page loads
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
+
+  // 🔥 Add expense
   const addExpense = async () => {
-  if (!title || !amount) return;
+    if (!title || !amount) return;
 
-  try {
-    await axios.post("http://localhost:5000/add-expense", {
-      title,
-      amount,
-    });
+    try {
+      await axios.post("http://localhost:5000/add-expense", {
+        title,
+        amount
+      });
 
-    const newExpense = { title, amount };
-    setExpenses([...expenses, newExpense]);
-    setTitle("");
-    setAmount("");
-  } catch (error) {
-    console.error("Error adding expense:", error);
-  }
-};
+      setTitle("");
+      setAmount("");
 
-  const deleteExpense = (indexToDelete) => {
-  const updatedExpenses = expenses.filter(
-    (_, index) => index !== indexToDelete
-  );
-  setExpenses(updatedExpenses);
-};
+      fetchExpenses(); // refresh list
+    } catch (error) {
+      console.error("Error adding expense:", error);
+    }
+  };
 
   return (
     <div style={{ padding: "40px", fontFamily: "Arial" }}>
@@ -42,7 +51,6 @@ function App() {
         placeholder="Expense Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        style={{ padding: "8px", marginRight: "10px" }}
       />
 
       <input
@@ -50,35 +58,32 @@ function App() {
         placeholder="Amount"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
-        style={{ padding: "8px", marginRight: "10px" }}
+        style={{ marginLeft: "10px" }}
       />
 
-      <button onClick={addExpense} style={{ padding: "8px 15px" }}>
+      <button onClick={addExpense} style={{ marginLeft: "10px" }}>
         Add
       </button>
 
-      <h2 style={{ marginTop: "40px" }}>Expenses</h2>
+      <h2 style={{ marginTop: "30px" }}>Expenses</h2>
 
       <ul>
-  {expenses.map((exp, index) => (
-    <li key={index}>
-      {exp.title} - ₹{exp.amount}
-      <button onClick={() => deleteExpense(index)}>
-        ❌
-      </button>
-    </li>
-  ))}
-   </ul>
+        {expenses.map((exp, index) => (
+          <li key={index}>
+            {exp.title} - ₹{exp.amount}
+          </li>
+        ))}
+      </ul>
 
       <h3>
-  Total: ₹
-  {expenses.reduce((total, exp) => total + Number(exp.amount), 0)}
-</h3>
-
+        Total: ₹
+        {expenses.reduce((total, exp) => total + Number(exp.amount), 0)}
+      </h3>
     </div>
   );
 }
 
 export default App;
+
 
 
