@@ -1,8 +1,9 @@
 import express from "express";
 import cors from "cors";
+import expenseRoutes from "./routes/expenseRoutes.js";
 
 const app = express();
-let expenses = [];
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -12,32 +13,8 @@ app.get("/", (req, res) => {
   res.send("Backend is running 🔥");
 });
 
-// POST route
-app.post("/add-expense", (req, res) => {
-  const { title, amount } = req.body;
-
-  const newExpense = { title, amount };
-
-  expenses.push(newExpense);
-
-  console.log("Stored in backend:", expenses);
-
-  res.json({ message: "Expense added successfully" });
-});
-app.get("/expenses", (req, res) => {
-  res.json(expenses);
-});
-app.delete("/delete-expense/:index", (req, res) => {
-  const index = parseInt(req.params.index);
-
-  if (index >= 0 && index < expenses.length) {
-    expenses.splice(index, 1);
-    res.json({ message: "Expense deleted successfully" });
-  } else {
-    res.status(400).json({ message: "Invalid index" });
-  }
-});
-
+// Use routes
+app.use("/", expenseRoutes);
 
 // Start server
 const PORT = 5000;
@@ -45,4 +22,3 @@ const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-

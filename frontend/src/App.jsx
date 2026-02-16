@@ -40,14 +40,15 @@ function App() {
     }
   };
 // 🔥 Delete expense
-const deleteExpense = async (index) => {
+const deleteExpense = async (id) => {
   try {
-    await axios.delete(`http://localhost:5000/delete-expense/${index}`);
-    fetchExpenses(); // refresh list after delete
+    await axios.delete(`http://localhost:5000/delete-expense/${id}`);
+    fetchExpenses();
   } catch (error) {
     console.error("Error deleting expense:", error);
   }
 };
+
 
   return (
     <div style={{ padding: "40px", fontFamily: "Arial" }}>
@@ -80,8 +81,9 @@ const deleteExpense = async (index) => {
   {expenses.map((exp, index) => (
     <li key={index}>
       {exp.title} - ₹{exp.amount}
-      <button 
-        onClick={() => deleteExpense(index)} 
+
+      <button
+        onClick={() => deleteExpense(index)}
         style={{ marginLeft: "10px" }}
       >
         ❌
@@ -89,6 +91,7 @@ const deleteExpense = async (index) => {
     </li>
   ))}
 </ul>
+
 
 
       <h3>
